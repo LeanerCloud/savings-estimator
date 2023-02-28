@@ -1,4 +1,4 @@
-module leanercloud
+module github.com/LeanerCloud/leaner-cloud-gui
 
 go 1.19
 
