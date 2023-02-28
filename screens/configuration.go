@@ -2,7 +2,8 @@ package screens
 
 import (
 	"fmt"
-	"leanercloud/core"
+
+	"github.com/LeanerCloud/leaner-cloud-gui/core"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"

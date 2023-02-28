@@ -1,7 +1,7 @@
 package screens
 
 import (
-	"leanercloud/core"
+	"github.com/LeanerCloud/leaner-cloud-gui/core"
 
 	"fyne.io/fyne/v2"
 )

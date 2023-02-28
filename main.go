@@ -2,9 +2,10 @@
 package main
 
 import (
-	"leanercloud/core"
-	"leanercloud/screens"
 	"log"
+
+	"github.com/LeanerCloud/leaner-cloud-gui/core"
+	"github.com/LeanerCloud/leaner-cloud-gui/screens"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"

@@ -3,10 +3,11 @@ package screens
 import (
 	"errors"
 	"fmt"
-	"leanercloud/core"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/LeanerCloud/leaner-cloud-gui/core"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
