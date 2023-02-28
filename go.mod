@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	fyne.io/fyne/v2 v2.3.0
-	github.com/aws/aws-sdk-go v1.44.210
 	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.3
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.3
@@ -14,11 +13,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.29.4
 	github.com/cristim/ec2-instances-info v0.0.0-20230112111652-35a8cfc9500f
 	gopkg.in/ini.v1 v1.62.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
-	fyne.io/fyne v1.4.3 // indirect
 	fyne.io/systray v1.10.1-0.20221115204952-d16a6177e6f1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.9 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.19 // indirect
@@ -58,9 +55,9 @@ require (
 	github.com/yuin/goldmark v1.4.13 // indirect
 	golang.org/x/image v0.0.0-20220601225756-64ec528b34cd // indirect
 	golang.org/x/mobile v0.0.0-20211207041440-4e6c2922fdee // indirect
-	golang.org/x/net v0.1.0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/js/dom v0.0.0-20210725211120-f030747120f2 // indirect
 )
