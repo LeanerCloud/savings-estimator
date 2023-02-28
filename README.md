@@ -1,6 +1,6 @@
 # leaner-cloud-gui
 
-Desktop application for Windows, Mac and Linux that can be used to configure [LeanerCloud](LeanerCloud.com) tools such as [AutoSpotting](AutoSpotting.io) and later [EBS Optimizer](https://leanercloud.com/ebs-optimizer).
+Desktop application for Windows, Mac and Linux that can be used to configure [LeanerCloud](LeanerCloud.com) tools such as [AutoSpotting](AutoSpotting.io), and later [EBS Optimizer](https://leanercloud.com/ebs-optimizer).
 
 ## Demo
 
@@ -35,6 +35,17 @@ autoscaling:DescribeAutoScalingGroups
 ec2:DescribeImages
 ec2:DescribeInstances
 ```
+
+## Dependency on AutoSpotting
+
+`leaner-cloud-gui` can be executed independent of AutoSpotting for cost savings simulation/estimation and configuration purposes.
+These configurations will be persisted as tags on your ASGs, but nothing else will happen unless AutoSpotting is installed in the AWS account.
+
+The latest version of AutoSpotting is available on the [AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-6uj4pruhgmun6), and you will need to follow the installation instructions:
+- Continue to Subscribe/Configuration/Launch
+- Install AutoSpotting using either CloudFormation or Terraform from the "Launch this software" view
+
+Once AutoSpotting is installed, any settings created as ASG tags through `leaner-cloud-gui` will be gradually applied on your AutoScaling groups.
 
 ## Local development
 
