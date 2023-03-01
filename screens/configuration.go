@@ -3,7 +3,7 @@ package screens
 import (
 	"fmt"
 
-	"github.com/LeanerCloud/leaner-cloud-gui/core"
+	"github.com/LeanerCloud/savings-estimator/core"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"

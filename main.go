@@ -4,8 +4,8 @@ package main
 import (
 	"log"
 
-	"github.com/LeanerCloud/leaner-cloud-gui/core"
-	"github.com/LeanerCloud/leaner-cloud-gui/screens"
+	"github.com/LeanerCloud/savings-estimator/core"
+	"github.com/LeanerCloud/savings-estimator/screens"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"

@@ -1,7 +1,7 @@
 package screens
 
 import (
-	"github.com/LeanerCloud/leaner-cloud-gui/core"
+	"github.com/LeanerCloud/savings-estimator/core"
 
 	"fyne.io/fyne/v2"
 )

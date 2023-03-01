@@ -3,7 +3,7 @@ package screens
 import (
 	"net/url"
 
-	"github.com/LeanerCloud/leaner-cloud-gui/core"
+	"github.com/LeanerCloud/savings-estimator/core"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -53,7 +53,7 @@ In addition, AutoSpotting also prioritizes for lower cost instances from newer g
 In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.`,
 		fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		container.NewCenter(container.NewHBox(
-			widget.NewHyperlink("LeanerCloud GUI on GitHub", parseURL("https://github.com/LeanerCloud/leaner-cloud-gui")),
+			widget.NewHyperlink("LeanerCloud GUI on GitHub", parseURL("https://github.com/LeanerCloud/savings-estimator")),
 			widget.NewLabel("-"),
 			widget.NewHyperlink("LeanerCloud.com", parseURL("https://leanercloud.com/")),
 			widget.NewLabel("-"),

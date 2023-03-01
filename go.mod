@@ -1,4 +1,4 @@
-module github.com/LeanerCloud/leaner-cloud-gui
+module github.com/LeanerCloud/savings-estimator
 
 go 1.19
 
