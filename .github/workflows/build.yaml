@@ -39,19 +39,19 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           release_name: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/windows-amd64/leaner-cloud-gui.exe
-          asset_name: leaner-cloud-gui-windows-amd64.exe
+          file: fyne-cross/bin/windows-amd64/savings-estimator.exe
+          asset_name: savings-estimator-windows-amd64.exe
 
       - name: Attach Linux Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
           release_name: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/linux-amd64/leaner-cloud-gui
-          asset_name: leaner-cloud-gui-linux-amd64
+          file: fyne-cross/bin/linux-amd64/savings-estimator
+          asset_name: savings-estimator-linux-amd64
 
       - name: Attach Linux ARM64 Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
           release_name: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/linux-arm64/leaner-cloud-gui
-          asset_name: leaner-cloud-gui-linux-arm64
+          file: fyne-cross/bin/linux-arm64/savings-estimator
+          asset_name: savings-estimator-linux-arm64
