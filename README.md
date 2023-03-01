@@ -29,9 +29,9 @@ For more details about AutoSpotting, see [AutoSpotting.io](AutoSpotting.io).
 
 ## Demo
 
-[![LeanerCloud GUI Demo](https://img.youtube.com/vi/2D6IMm6dFDo/0.jpg)](https://www.youtube.com/watch?v=2D6IMm6dFDo)
+[![LeanerCloud GUI Demo](https://user-images.githubusercontent.com/95209/222153916-9400f0ea-ff9e-44e6-b14d-e85d5713289b.png)](https://youtu.be/VXfCOXXtLwA)
 
-(click above to play the demo video)
+(click play the demo video on YouTube)
 
 ## Precompiled Binaries
 
