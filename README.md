@@ -22,7 +22,7 @@ AutoSpotting allows you to adopt Spot instances with all the Spot best practices
 
 In addition, AutoSpotting also prioritizes for lower cost instances from newer generations and implements a reliable failover to on-demand instances when running out of Spot capacity.
 
-In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.`,
+In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.
 
 
 For more details about AutoSpotting, see [LeanerCloud.com](LeanerCloud.com).
