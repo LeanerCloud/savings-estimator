@@ -1,6 +1,31 @@
 # leaner-cloud-gui
 
-Desktop application for Windows, Mac and Linux that can be used to configure [LeanerCloud](LeanerCloud.com) tools such as [AutoSpotting](AutoSpotting.io), and later [EBS Optimizer](https://leanercloud.com/ebs-optimizer).
+
+Welcome to the LeanerCloud AWS Spot cost savings estimation tool!
+
+This tool allows you to estimate the cost savings you can achieve in your AWS account by converting your AutoScaling Groups to Spot instances.
+
+You can select various scenarios, such as to keep some of your instances as OnDemand in each group (maybe covered by Reserved Instances or Savings Plans),
+or only convert some of your AutoScaling Groups to Spot as part of a gradual rollout.
+
+You may use any mechanism to adopt Spot, such as converting the configuration yourself group by group as per what you defined in this tool.
+
+For your convenience, you can also use [AutoSpotting](AutoSpotting.io), our state of the art cost optimization engine for Spot. 
+
+AutoSpotting is tightly integrated with
+this cost estimator, so you can apply this configuration with a single click, by tagging them as expected by AutoSpotting.
+
+AutoSpotting allows you to adopt Spot instances with all the Spot best practices, recommended by AWS:
+-  wide diversification over multiple instance types
+-  uses a capacity optimized allocation strategy to reduce the frequency of Spot interruptions.
+
+
+In addition, AutoSpotting also prioritizes for lower cost instances from newer generations and implements a reliable failover to on-demand instances when running out of Spot capacity.
+
+In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.`,
+
+
+For more details about AutoSpotting, see [LeanerCloud.com](LeanerCloud.com).
 
 ## Demo
 
@@ -52,3 +77,8 @@ Once AutoSpotting is installed, any settings created as ASG tags through `leaner
 ## Local development
 
 `go run .`
+
+
+## Future plans
+
+Please refer to our public [roadmap](https://github.com/orgs/LeanerCloud/projects/1)
