@@ -55,6 +55,8 @@ In most situations AutoSpotting doesn't require any configuration changes to you
 		container.NewCenter(container.NewHBox(
 			widget.NewHyperlink("LeanerCloud GUI on GitHub", parseURL("https://github.com/LeanerCloud/savings-estimator")),
 			widget.NewLabel("-"),
+			widget.NewHyperlink("Demo Video", parseURL("https://www.youtube.com/watch?v=VXfCOXXtLwA")),
+			widget.NewLabel("-"),
 			widget.NewHyperlink("LeanerCloud.com", parseURL("https://leanercloud.com/")),
 			widget.NewLabel("-"),
 			widget.NewHyperlink("AutoSpotting.io", parseURL("https://autospotting.io")),
