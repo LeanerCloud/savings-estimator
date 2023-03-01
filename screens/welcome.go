@@ -7,7 +7,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/cmd/fyne_demo/data"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
@@ -22,7 +21,7 @@ func parseURL(urlStr string) *url.URL {
 }
 
 func welcomeScreen(_ fyne.Window, _ *core.Launcher) fyne.CanvasObject {
-	logo := canvas.NewImageFromResource(data.FyneScene)
+	logo := canvas.NewImageFromFile("logo.png")
 	logo.FillMode = canvas.ImageFillContain
 	if fyne.CurrentDevice().IsMobile() {
 		logo.SetMinSize(fyne.NewSize(192, 192))
@@ -30,17 +29,38 @@ func welcomeScreen(_ fyne.Window, _ *core.Launcher) fyne.CanvasObject {
 		logo.SetMinSize(fyne.NewSize(256, 256))
 	}
 
-	return container.NewCenter(container.NewVBox(
-		widget.NewLabelWithStyle("Welcome to the LeanerCloud configuration tool. Currently supported tools: AutoSpotting and EBS Optimizer", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-		//logo,
-		container.NewHBox(
-			widget.NewHyperlink("leanercloud.com", parseURL("https://leanercloud.com/")),
-			// widget.NewHyperlink("leanercloud.com", parseURL("https://leanercloud.com/")),
-			widget.NewLabel("-"),
-			widget.NewHyperlink("autospotting.io", parseURL("https://autospotting.io")),
-			// widget.NewLabel("-"),
+	return container.NewCenter(container.NewVBox(widget.NewLabelWithStyle(
+		`Welcome to the LeanerCloud AWS Spot cost savings estimation tool!
 
-		),
-		widget.NewLabel(""), // balance the header on the tutorial screen we leave blank on this content
+This tool allows you to estimate the cost savings you can achieve in your AWS account by converting your AutoScaling Groups to Spot instances.
+
+You can select various scenarios, such as to keep some of your instances as OnDemand in each group (maybe covered by Reserved Instances or Savings Plans),
+or only convert some of your AutoScaling Groups to Spot as part of a gradual rollout.
+
+You may use any mechanism to adopt Spot, such as converting the configuration yourself group by group as per what you defined in this tool.
+
+
+For your convenience, you can also use AutoSpotting, our state of the art cost optimization engine for Spot. AutoSpotting is tightly integrated with
+this cost estimator, so you can apply this configuration with a single click, by tagging them as expected by AutoSpotting. You just need to install 
+AutoSpotting from the AWS Marketplace link below
+
+AutoSpotting allows you to adopt Spot instances with all the Spot best practices, recommended by AWS such as wide diversification over multiple instance
+types and uses capacity optimized allocation strategy optimized for reduced interruptions.
+
+
+In addition, AutoSpotting also prioritizes for lower cost instances from newer generations and implements a reliable failover to on-demand instances when running out of Spot capacity.
+
+In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.`,
+		fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+		container.NewCenter(container.NewHBox(
+			widget.NewHyperlink("LeanerCloud GUI on GitHub", parseURL("https://github.com/LeanerCloud/leaner-cloud-gui")),
+			widget.NewLabel("-"),
+			widget.NewHyperlink("LeanerCloud.com", parseURL("https://leanercloud.com/")),
+			widget.NewLabel("-"),
+			widget.NewHyperlink("AutoSpotting.io", parseURL("https://autospotting.io")),
+			widget.NewLabel("-"),
+			widget.NewHyperlink("Install AutoSpotting from the AWS Marketplace", parseURL("https://aws.amazon.com/marketplace/pp/prodview-6uj4pruhgmun6")),
+		)),
+		logo,
 	))
 }
