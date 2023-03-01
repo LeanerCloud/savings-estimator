@@ -25,7 +25,7 @@ In addition, AutoSpotting also prioritizes for lower cost instances from newer g
 In most situations AutoSpotting doesn't require any configuration changes to your AutoScaling Groups, but uses the existing launch template or launch configuration.
 
 
-For more details about AutoSpotting, see [LeanerCloud.com](LeanerCloud.com).
+For more details about AutoSpotting, see [AutoSpotting.io](AutoSpotting.io).
 
 ## Demo
 
@@ -81,7 +81,10 @@ Once AutoSpotting is installed, any settings created as ASG tags through `saving
 
 ## Future plans
 
-Please refer to our public [roadmap](https://github.com/orgs/LeanerCloud/projects/1)
+- Play nicely with your Reserved Instances and Savings Plans coverage
+- Integrate it with our EBS Optimizer tool for similarly optimizing EBS volumes.
+
+Please refer to our public [roadmap](https://github.com/orgs/LeanerCloud/projects/1).
 
 ## License
 
