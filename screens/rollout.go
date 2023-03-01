@@ -43,7 +43,7 @@ type ColumnInfo struct {
 
 func autoSpottingRollout(a fyne.App, w fyne.Window, c *core.Launcher) *container.TabItem {
 
-	return container.NewTabItem("AutoSpotting", makeASGTable(w, c))
+	return container.NewTabItem("Convert ASGs to Spot", makeASGTable(w, c))
 }
 
 func formatFloat(f float64) string {
@@ -487,7 +487,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 				},
 				&widget.Form{
 					Items: []*widget.FormItem{
-						{Text: "AutoSpotting charges", Widget: widget.NewLabelWithData(
+						{Text: "AutoSpotting charges (~5% of savings)", Widget: widget.NewLabelWithData(
 							c.AutoSpottingProjectedAutoSpottingCharges), HintText: ""},
 						{Text: "Total Monthly net savings", Widget: widget.NewLabelWithData(
 							c.AutoSpottingProjectedNetSavings), HintText: ""},
@@ -496,7 +496,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 				&widget.Form{
 					Items: []*widget.FormItem{
 
-						{Text: "", Widget: widget.NewButton("Apply\nconfiguration", func() {
+						{Text: "", Widget: widget.NewButton("Generate AutoSpotting\n configuration", func() {
 							c.ApplyAutoSpottingTags()
 						}), HintText: ""},
 					},
