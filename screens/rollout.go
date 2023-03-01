@@ -498,6 +498,12 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 
 						{Text: "", Widget: widget.NewButton("Generate AutoSpotting\n configuration", func() {
 							c.ApplyAutoSpottingTags()
+							dialog.ShowInformation("Information",
+
+								"The configuration was persisted to your AutoScaling group tags. "+
+									"In order for it to be applied, \nyou need to install AutoSpotting "+
+									"from the AWS Marketplace using the link from the Welcome tab...",
+								w)
 						}), HintText: ""},
 					},
 				},
