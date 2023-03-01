@@ -1,4 +1,4 @@
-# leaner-cloud-gui
+# LeanerCloud Spot Savings Estimator
 
 
 Welcome to the LeanerCloud AWS Spot cost savings estimation tool!
