@@ -13,7 +13,7 @@ You may use any mechanism to adopt Spot, such as converting the configuration yo
 For your convenience, you can also use [AutoSpotting](AutoSpotting.io), our state of the art cost optimization engine for Spot. 
 
 AutoSpotting is tightly integrated with
-this cost estimator, so you can apply this configuration with a single click, by tagging them as expected by AutoSpotting.
+this cost savings estimator, so you can apply this configuration with a single click, by tagging your ASGs as expected by AutoSpotting.
 
 AutoSpotting allows you to adopt Spot instances with all the Spot best practices, recommended by AWS:
 -  wide diversification over multiple instance types
