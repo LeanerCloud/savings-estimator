@@ -1,4 +1,4 @@
-# LeanerCloud Spot Savings Estimator
+# LeanerCloud GUI - Spot Savings Estimator GUI application.
 
 
 Welcome to the LeanerCloud AWS Spot cost savings estimation tool!
@@ -82,3 +82,12 @@ Once AutoSpotting is installed, any settings created as ASG tags through `leaner
 ## Future plans
 
 Please refer to our public [roadmap](https://github.com/orgs/LeanerCloud/projects/1)
+
+## License
+
+This tool is available under the AGPL-3 Open Source license.
+
+
+-- 
+
+This tool is proudly written in Go using the [fyne](fyne.io) GUI toolkit.
