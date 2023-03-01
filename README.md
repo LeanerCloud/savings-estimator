@@ -15,7 +15,7 @@ For your convenience, you can also use [AutoSpotting](AutoSpotting.io), our stat
 AutoSpotting is tightly integrated with
 this cost savings estimator, so you can apply this configuration with a single click, by tagging your ASGs as expected by AutoSpotting.
 
-AutoSpotting allows you to adopt Spot instances with all the Spot best practices, recommended by AWS:
+AutoSpotting allows you to adopt Spot instances with all the Spot best practices recommended by AWS:
 -  wide diversification over multiple instance types
 -  uses a capacity optimized allocation strategy to reduce the frequency of Spot interruptions.
 
