@@ -1,0 +1,29 @@
+Type: AWS::IAM::Role
+Properties:
+  RoleName: SavingsEstimatorIAMRole
+  AssumeRolePolicyDocument:
+    Version: '2012-10-17'
+    Statement:
+      - Effect: Allow
+        Principal:
+          Service:
+            - ec2.amazonaws.com
+        Action:
+          - sts:AssumeRole
+  Path: "/"
+  Policies:
+    - PolicyName: SavingsEstimatorIAMRolePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - autoscaling:CreateOrUpdateTags
+              - autoscaling:DescribeAutoScalingGroups
+              - ec2:DescribeImages
+              - ec2:DescribeInstances
+            Resource: '*'
+Outputs:
+  SavingsEstimatorIAMRoleArn:
+    Description: The ARN of the SavingsEstimatorIAMRole IAM role
+    Value: !GetAtt SavingsEstimatorIAMRole.Arn
