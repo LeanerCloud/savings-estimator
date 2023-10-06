@@ -13,7 +13,13 @@ rollout.
 
 ## Demo
 
-[![Savings Estimator Demo](https://yt-embed.live/embed?v=VXfCOXXtLwA)](https://youtu.be/VXfCOXXtLwA "Savings Estimator demo")
+[Demo](https://www.youtube.com/watch?v=VXfCOXXtLwA)
+
+And here's a screenshot from that demo:
+
+![Screenshot](https://github.com/LeanerCloud/savings-estimator/assets/95209/897a2fb4-2838-401a-bac0-53b67b1eb77d)
+
+
 
 ## Precompiled Binaries
 
