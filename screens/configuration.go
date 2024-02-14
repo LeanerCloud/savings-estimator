@@ -1,7 +1,7 @@
 package screens
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/LeanerCloud/savings-estimator/core"
 
@@ -31,7 +31,7 @@ func staticAuth(a fyne.App, c *core.Launcher) *widget.AccordionItem {
 
 	regionsStaticAuth := widget.NewSelect(c.AWSRegions(), func(s string) {
 		a.Preferences().SetString(preferenceRegion, s)
-		fmt.Println("selected region", s)
+		log.Println("selected region", s)
 		c.ConnectWithStaticAuth(accessKey.Text, secret.Text, sessionToken.Text)
 		c.SetRegion(s)
 	})
@@ -58,7 +58,7 @@ func profileAuth(a fyne.App, c *core.Launcher) *widget.AccordionItem {
 	regionsProfileAuth := widget.NewSelect(c.AWSRegions(), func(s string) {})
 	profiles := widget.NewSelect(c.ReadAWSProfiles(), func(s string) {
 		a.Preferences().SetString(preferenceProfile, s)
-		fmt.Println("selected profile", s)
+		log.Println("selected profile", s)
 		c.ConnectWithProfileAuth(regionsProfileAuth.Selected)
 		c.SetRegion(s)
 	})
@@ -70,7 +70,7 @@ func profileAuth(a fyne.App, c *core.Launcher) *widget.AccordionItem {
 
 	regionsProfileAuth.OnChanged = func(s string) {
 		a.Preferences().SetString(preferenceRegion, s)
-		fmt.Println("selected region", s)
+		log.Println("selected region", s)
 		c.ConnectWithProfileAuth(profiles.Selected)
 		c.SetRegion(s)
 	}
@@ -98,7 +98,7 @@ func autoSpottingConfiguration(a fyne.App, c *core.Launcher) *container.TabItem 
 
 	versions := widget.NewSelect(autoSpottingVersions, func(s string) {
 		a.Preferences().SetString(preferenceAutoSpottingVersion, s)
-		fmt.Println("selected AutoSpotting Version", s)
+		log.Println("selected AutoSpotting Version", s)
 		//	c.ProcessAutoSpottingTemplate(a, s)
 	})
 
@@ -115,7 +115,7 @@ func autoSpottingConfiguration(a fyne.App, c *core.Launcher) *container.TabItem 
 
 	// regionsStaticAuth := widget.NewSelect(awsRegions(), func(s string) {
 	// 	a.Preferences().SetString(preferenceRegion, s)
-	// 	fmt.Println("selected region", s)
+	// 	log.Println("selected region", s)
 	// 	c.StaticAuth(accessKey.Text, secret.Text, sessionToken.Text, s)
 	// })
 
@@ -155,7 +155,7 @@ func ebsOptimizerConfiguration(a fyne.App, c *core.Launcher) *container.TabItem 
 
 	// regionsStaticAuth := widget.NewSelect(awsRegions(), func(s string) {
 	// 	a.Preferences().SetString(preferenceRegion, s)
-	// 	fmt.Println("selected region", s)
+	// 	log.Println("selected region", s)
 	// 	c.StaticAuth(accessKey.Text, secret.Text, sessionToken.Text, s)
 	// })
 
@@ -190,17 +190,17 @@ func configuration(_ fyne.Window, c *core.Launcher) fyne.CanvasObject {
 // selectEntry.PlaceHolder = "Type or select"
 // disabledCheck := widget.NewCheck("Disabled check", func(bool) {})
 // disabledCheck.Disable()
-// checkGroup := widget.NewCheckGroup([]string{"CheckGroup Item 1", "CheckGroup Item 2"}, func(s []string) { fmt.Println("selected", s) })
+// checkGroup := widget.NewCheckGroup([]string{"CheckGroup Item 1", "CheckGroup Item 2"}, func(s []string) { log.Println("selected", s) })
 // checkGroup.Horizontal = true
-// radio := widget.NewRadioGroup([]string{"Radio Item 1", "Radio Item 2"}, func(s string) { fmt.Println("selected", s) })
+// radio := widget.NewRadioGroup([]string{"Radio Item 1", "Radio Item 2"}, func(s string) { log.Println("selected", s) })
 // radio.Horizontal = true
 // disabledRadio := widget.NewRadioGroup([]string{"Disabled radio"}, func(string) {})
 // disabledRadio.Disable()
 
 // return container.NewVBox(
-// 	widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) { fmt.Println("selected", s) }),
+// 	widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) { log.Println("selected", s) }),
 // 	selectEntry,
-// 	widget.NewCheck("Check", func(on bool) { fmt.Println("checked", on) }),
+// 	widget.NewCheck("Check", func(on bool) { log.Println("checked", on) }),
 // 	disabledCheck,
 // 	checkGroup,
 // 	radio,

@@ -13,7 +13,7 @@ import (
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	ec2instancesinfo "github.com/cristim/ec2-instances-info"
+	ec2instancesinfo "github.com/LeanerCloud/ec2-instances-info"
 )
 
 const (
@@ -121,15 +121,15 @@ func main() {
 // 	disabledItem := fyne.NewMenuItem("Disabled", nil)
 // 	disabledItem.Disabled = true
 // 	otherItem := fyne.NewMenuItem("Other", nil)
-// 	mailItem := fyne.NewMenuItem("Mail", func() { fmt.Println("Menu New->Other->Mail") })
+// 	mailItem := fyne.NewMenuItem("Mail", func() { log.Println("Menu New->Other->Mail") })
 // 	mailItem.Icon = theme.MailComposeIcon()
 // 	otherItem.ChildMenu = fyne.NewMenu("",
-// 		fyne.NewMenuItem("Project", func() { fmt.Println("Menu New->Other->Project") }),
+// 		fyne.NewMenuItem("Project", func() { log.Println("Menu New->Other->Project") }),
 // 		mailItem,
 // 	)
-// 	fileItem := fyne.NewMenuItem("File", func() { fmt.Println("Menu New->File") })
+// 	fileItem := fyne.NewMenuItem("File", func() { log.Println("Menu New->File") })
 // 	fileItem.Icon = theme.FileIcon()
-// 	dirItem := fyne.NewMenuItem("Directory", func() { fmt.Println("Menu New->Directory") })
+// 	dirItem := fyne.NewMenuItem("Directory", func() { log.Println("Menu New->Directory") })
 // 	dirItem.Icon = theme.FolderIcon()
 // 	newItem.ChildMenu = fyne.NewMenu("",
 // 		fileItem,
@@ -165,7 +165,7 @@ func main() {
 // 		shortcutFocused(pasteShortcut, w)
 // 	})
 // 	pasteItem.Shortcut = pasteShortcut
-// 	performFind := func() { fmt.Println("Menu Find") }
+// 	performFind := func() { log.Println("Menu Find") }
 // 	findItem := fyne.NewMenuItem("Find", performFind)
 // 	findItem.Shortcut = &desktop.CustomShortcut{KeyName: fyne.KeyF, Modifier: fyne.KeyModifierShortcutDefault | fyne.KeyModifierAlt | fyne.KeyModifierShift | fyne.KeyModifierControl | fyne.KeyModifierSuper}
 // 	w.Canvas().AddShortcut(findItem.Shortcut, func(shortcut fyne.Shortcut) {

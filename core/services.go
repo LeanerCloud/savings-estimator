@@ -30,5 +30,5 @@ type globalServices struct {
 // 	return
 // }
 // for _, r := range res.StackSummaries {
-// 	fmt.Println(*r.StackName, r.CreationTime)
+// 	log.Println(*r.StackName, r.CreationTime)
 // }

@@ -19,7 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
-	ec2instancesinfo "github.com/cristim/ec2-instances-info"
+	ec2instancesinfo "github.com/LeanerCloud/ec2-instances-info"
 	"gopkg.in/ini.v1"
 )
 
@@ -76,7 +76,7 @@ func (c *Launcher) ReadAWSProfiles() []string {
 
 	cfg, err := ini.Load(path)
 	if err != nil {
-		fmt.Printf("Fail to read AWS Credentials file: %v", err)
+		log.Printf("Fail to read AWS Credentials file: %v", err)
 		return []string{}
 	}
 

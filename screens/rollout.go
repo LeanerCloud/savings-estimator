@@ -28,17 +28,36 @@ const (
 )
 
 type ColumnInfo struct {
-	Header             string
-	Type               widgetType
-	LabelContentFunc   func(id *widget.TableCellID, label *widget.Label)
-	EntryContentFunc   func(id *widget.TableCellID, entry *widget.Entry)
-	CheckContentFunc   func(id *widget.TableCellID, check *widget.Check)
-	CheckOnChangedFunc func(id *widget.TableCellID) (f func(set bool))
-	EntryValidator     fyne.StringValidator
-	PlaceHolder        string
-	EntryOnChangedFunc func(id *widget.TableCellID, entry *widget.Entry) (f func(s string))
-	EntryLinkToASGFunc func(id *widget.TableCellID, entry *widget.Entry)
-	LinkCheckToASGFunc func(id *widget.TableCellID, check *widget.Check)
+	Header         string
+	Type           widgetType
+	DataKey        string // New field to identify the data
+	EntryValidator fyne.StringValidator
+	PlaceHolder    string
+}
+
+// ActiveHeader represents a table header that can handle taps.
+type ActiveHeader struct {
+	widget.Label
+	OnTapped func()
+}
+
+// newActiveHeader creates a new header cell with the specified label.
+func newActiveHeader(label string) *ActiveHeader {
+	h := &ActiveHeader{}
+	h.ExtendBaseWidget(h)
+	h.SetText(label)
+	return h
+}
+
+// Tapped is called when the header is tapped.
+func (h *ActiveHeader) Tapped(_ *fyne.PointEvent) {
+	if h.OnTapped != nil {
+		h.OnTapped()
+	}
+}
+
+// TappedSecondary is called on a secondary tap (right-click, long-press, etc.).
+func (h *ActiveHeader) TappedSecondary(_ *fyne.PointEvent) {
 }
 
 func autoSpottingRollout(a fyne.App, w fyne.Window, c *core.Launcher) *container.TabItem {
@@ -56,178 +75,62 @@ func formatFloat(f float64) string {
 	return fmt.Sprintf(format, f)
 }
 
-func makeASGTable(_ fyne.Window, c *core.Launcher) fyne.CanvasObject {
-
-	data := []ColumnInfo{
-		{
-			Header: "",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(fmt.Sprintf("%d", id.Row))
-			},
-		},
-		{
-			Header: "AutoScaling Group Name",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(*c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].AutoScalingGroupName)
-			},
-		},
-		{
-			Header: "Instance Type",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(strings.Join(c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].InstanceTypes, ","))
-			},
-		},
-		{
-			Header: "Instances",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(fmt.Sprintf("%d",
-					*c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].DesiredCapacity))
-			},
-		},
-		{
-			Header: "Cost $",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-
-				label.SetText(formatFloat(
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].HourlyCosts * c.PricingIntervalMultiplier))
-			},
-		},
-
-		{
-
-			Header: "Projected Cost $",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(formatFloat(
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].ProjectedCosts * c.PricingIntervalMultiplier))
-			},
-		},
-
-		{
-			Header: "Projected Savings $",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(formatFloat(
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].ProjectedSavings * c.PricingIntervalMultiplier))
-			},
-		},
-		{
-			Header: "Projected Savings %",
-			Type:   Label,
-			LabelContentFunc: func(id *widget.TableCellID, label *widget.Label) {
-				label.SetText(fmt.Sprintf("%d%%",
-					int(c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].ProjectedSavings/
-						c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].HourlyCosts*100)))
-			},
-		},
-
-		{
-			Header:         "OnDemand %",
-			Type:           Entry,
-			EntryValidator: validation.NewRegexp(`^([0-9]|[1-9][0-9]|100)$`, "Must contain an integer number between 0 and 100"),
-			PlaceHolder:    "0-100",
-			EntryContentFunc: func(id *widget.TableCellID, entry *widget.Entry) {
-				entry.SetText(fmt.Sprintf("%.0f",
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].OnDemandPercentage))
-			},
-			EntryOnChangedFunc: func(id *widget.TableCellID, entry *widget.Entry) (f func(s string)) {
-				//log.Printf("Entry for cell %d, %d changed to %v", id.Row, id.Col, entry.Text)
-				return func(s string) {
-					var n float64
-					if entry.Validate() == nil {
-						log.Println("Data is valid", s)
-						n, _ = strconv.ParseFloat(s, 64)
-					}
-
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].OnDemandPercentage = n
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].CalculateHourlyPricing()
-					c.UpdateAutoSpottingTotals(c.CurrentRegion)
-				}
-			},
-			EntryLinkToASGFunc: func(id *widget.TableCellID, entry *widget.Entry) {
-				if asg := c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1]; asg.OnDemandPercentageEntry == nil {
-					log.Printf("Setting Percentage entry to ASG %v", *asg.AutoScalingGroupName)
-					asg.OnDemandPercentageEntry = entry
-				}
-			},
-		},
-		{
-			Header:         "OnDemand #",
-			Type:           Entry,
-			EntryValidator: validation.NewRegexp(`^([0-9]|[1-9][0-9]+)$`, "Must contain a natural number"),
-			PlaceHolder:    "Number",
-			EntryContentFunc: func(id *widget.TableCellID, entry *widget.Entry) {
-				entry.SetText(fmt.Sprintf("%d",
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].OnDemandNumber))
-			},
-			EntryOnChangedFunc: func(id *widget.TableCellID, entry *widget.Entry) (f func(s string)) {
-				//log.Printf("Entry for cell %d, %d changed to %v", id.Row, id.Col, entry.Text)
-				return func(s string) {
-					var n int64
-					if entry.Validate() == nil {
-						log.Println("Data is valid", s)
-						n, _ = strconv.ParseInt(s, 10, 64)
-					}
-
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].OnDemandNumber = n
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].CalculateHourlyPricing()
-					c.UpdateAutoSpottingTotals(c.CurrentRegion)
-				}
-			},
-			EntryLinkToASGFunc: func(id *widget.TableCellID, entry *widget.Entry) {
-				if asg := c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1]; asg.OnDemandNumberEntry == nil {
-					log.Printf("Setting Number entry to ASG %v", *asg.AutoScalingGroupName)
-					asg.OnDemandNumberEntry = entry
-				}
-			},
-		},
-
-		{
-			Header: "Enabled",
-			Type:   Check,
-			CheckContentFunc: func(id *widget.TableCellID, check *widget.Check) {
-				check.SetChecked(c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].Enabled)
-			},
-			CheckOnChangedFunc: func(id *widget.TableCellID) (f func(set bool)) {
-				return func(set bool) {
-					log.Printf("Checkbox for cell %d, %d changed to %v", id.Row, id.Col, set)
-					c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1].Enabled = set
-					c.UpdateAutoSpottingTotals(c.CurrentRegion)
-				}
-			},
-			LinkCheckToASGFunc: func(id *widget.TableCellID, check *widget.Check) {
-				if asg := c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row-1]; asg.ConvertToSpotCheck == nil {
-					log.Printf("Setting Check to ASG %v", *asg.AutoScalingGroupName)
-					asg.ConvertToSpotCheck = check
-				}
-			},
-		},
+func getColumnInfoData() []ColumnInfo {
+	return []ColumnInfo{
+		{Header: "AutoScaling Group Name", Type: Label, DataKey: "AutoScalingGroupName"},
+		{Header: "Instance Type", Type: Label, DataKey: "InstanceTypes"},
+		{Header: "Instances", Type: Label, DataKey: "DesiredCapacity"},
+		{Header: "Cost $", Type: Label, DataKey: "HourlyCosts"},
+		{Header: "Projected Cost $", Type: Label, DataKey: "ProjectedCosts"},
+		{Header: "Projected Savings $", Type: Label, DataKey: "ProjectedSavings"},
+		{Header: "Projected Savings %", Type: Label, DataKey: "ProjectedSavingsPercent"},
+		{Header: "OnDemand %", Type: Entry, DataKey: "OnDemandPercentage", EntryValidator: validation.NewRegexp(`^([0-9]|[1-9][0-9]|100)$`, "Must contain an integer number between 0 and 100"), PlaceHolder: "0-100"},
+		{Header: "OnDemand #", Type: Entry, DataKey: "OnDemandNumber", EntryValidator: validation.NewRegexp(`^([0-9]|[1-9][0-9]+)$`, "Must contain a natural number"), PlaceHolder: "Number"},
+		{Header: "Enabled", Type: Check, DataKey: "Enabled"},
 	}
+}
 
-	t := widget.NewTable(
+func createTableWithHeaders(c *core.Launcher, data []ColumnInfo) *widget.Table {
+	t := widget.NewTableWithHeaders(
 		func() (int, int) {
 			if c.Regions == nil || c.Regions[c.CurrentRegion] == nil ||
 				c.Regions[c.CurrentRegion].AutoSpotting == nil {
-				return 1, 1
+				return 0, 0
 			} else {
-				return len(c.Regions[c.CurrentRegion].AutoSpotting.ASGs) + 1, len(data)
+				return len(c.Regions[c.CurrentRegion].AutoSpotting.ASGs), len(data)
 			}
 		},
 		func() fyne.CanvasObject {
-			return container.NewMax(
+			return container.NewStack(
 				widget.NewLabel(""),
 				widget.NewCheck("", func(bool) {}),
 				widget.NewEntry(),
 			)
 		}, func(id widget.TableCellID, o fyne.CanvasObject) {})
 
+	t.CreateHeader = func() fyne.CanvasObject {
+		return newActiveHeader("")
+	}
+
+	t.UpdateHeader = func(id widget.TableCellID, o fyne.CanvasObject) {
+		header := o.(*ActiveHeader)
+		header.TextStyle.Bold = true
+		if id.Col >= 0 && id.Col < len(data) {
+			header.SetText(data[id.Col].Header)
+		}
+
+		header.OnTapped = func() {
+			log.Printf("Header %d tapped\n", id.Col)
+		}
+	}
+	return t
+}
+func makeASGTable(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
+	data := getColumnInfoData()
+	t := createTableWithHeaders(c, data)
+
 	t.UpdateCell = func(id widget.TableCellID, o fyne.CanvasObject) {
-		generateAutoSpottingTableData(&o, &id, &data)
+		generateAutoSpottingTableData(&o, &id, &data, c)
 		c.UpdateAutoSpottingTotals(c.CurrentRegion)
 	}
 
@@ -238,57 +141,111 @@ func makeASGTable(_ fyne.Window, c *core.Launcher) fyne.CanvasObject {
 	return t
 }
 
-func generateAutoSpottingTableData(o *fyne.CanvasObject, id *widget.TableCellID, data *[]ColumnInfo) {
+func generateAutoSpottingTableData(o *fyne.CanvasObject, id *widget.TableCellID, data *[]ColumnInfo, c *core.Launcher) {
+	container := (*o).(*fyne.Container)
+	label := container.Objects[0].(*widget.Label)
+	check := container.Objects[1].(*widget.Check)
+	entry := container.Objects[2].(*widget.Entry)
 
-	//log.Printf("Generating table cell row: %d, col: %d", id.Row, id.Col)
+	// Clear previous state
+	label.Hide()
+	check.Hide()
+	entry.Hide()
 
-	label := (*o).(*fyne.Container).Objects[0].(*widget.Label)
-	check := (*o).(*fyne.Container).Objects[1].(*widget.Check)
-	entry := (*o).(*fyne.Container).Objects[2].(*widget.Entry)
-
-	if id.Row == 0 {
-		check.Hide()
-		entry.Hide()
-		label.TextStyle = fyne.TextStyle{Bold: true}
-		label.Alignment = fyne.TextAlignCenter
-		label.SetText((*data)[id.Col].Header)
-		label.Show()
+	if id.Row < 0 || id.Row >= len(c.Regions[c.CurrentRegion].AutoSpotting.ASGs) {
 		return
 	}
 
-	switch (*data)[id.Col].Type {
-	case Label:
-		{
-			label.Show()
-			check.Hide()
-			entry.Hide()
-			(*data)[id.Col].LabelContentFunc(id, label)
-		}
-	case Check:
-		{
-			(*data)[id.Col].CheckContentFunc(id, check)
-			check.OnChanged = (*data)[id.Col].CheckOnChangedFunc(id)
-			(*data)[id.Col].LinkCheckToASGFunc(id, check)
+	colInfo := (*data)[id.Col]
+	asg := c.Regions[c.CurrentRegion].AutoSpotting.ASGs[id.Row]
 
+	// Determine cell width for this column (you might have this set elsewhere in your app)
+	// cellWidth := int(t.ColumnWidth(id.Col)) - cellPadding
+
+	// maxChars := estimateMaxChars(cellWidth, avgCharWidth)
+
+	switch colInfo.Type {
+	case Label:
+
+		var text string
+		switch colInfo.DataKey {
+		case "AutoScalingGroupName":
+			text = *asg.AutoScalingGroupName
+		case "InstanceTypes":
+			text = strings.Join(asg.InstanceTypes, ",")
+		case "DesiredCapacity":
+			text = fmt.Sprintf("%d", *asg.DesiredCapacity)
+		case "HourlyCosts":
+			text = formatFloat(asg.HourlyCosts * c.PricingIntervalMultiplier)
+		case "ProjectedCosts":
+			text = formatFloat(asg.ProjectedCosts * c.PricingIntervalMultiplier)
+		case "ProjectedSavings":
+			text = formatFloat(asg.ProjectedSavings * c.PricingIntervalMultiplier)
+		case "ProjectedSavingsPercent":
+			percentage := 0
+			if asg.HourlyCosts > 0 {
+				percentage = int(asg.ProjectedSavings / asg.HourlyCosts * 100)
+			}
+			text = fmt.Sprintf("%d%%", percentage)
+		}
+		// truncatedText := truncateTextToFitCell(text, maxChars)
+
+		// label.SetText(truncatedText)
+		label.SetText(text)
+		label.Show()
+	case Check:
+		if colInfo.DataKey == "Enabled" {
 			check.Show()
-			entry.Hide()
-			label.Hide()
+			check.SetChecked(asg.Enabled)
+			check.OnChanged = func(checked bool) {
+				// Update the ASG Enabled status based on checkbox
+				asg.Enabled = checked
+				// Additional logic to handle the change can be added here
+			}
 		}
 	case Entry:
-		{
-			entry.Validator = (*data)[id.Col].EntryValidator
-			entry.SetPlaceHolder((*data)[id.Col].PlaceHolder)
-			(*data)[id.Col].EntryContentFunc(id, entry)
-			entry.OnChanged = (*data)[id.Col].EntryOnChangedFunc(id, entry)
-			(*data)[id.Col].EntryLinkToASGFunc(id, entry)
+		entry.Show()
+		entry.Validator = colInfo.EntryValidator
+		entry.SetPlaceHolder(colInfo.PlaceHolder)
+		var entryText string
+		switch colInfo.DataKey {
+		case "OnDemandPercentage":
+			entryText = fmt.Sprintf("%.0f", asg.OnDemandPercentage)
+		case "OnDemandNumber":
+			entryText = fmt.Sprintf("%d", asg.OnDemandNumber)
+		}
+		entry.SetText(entryText)
+		entry.OnChanged = func(text string) {
+			switch colInfo.DataKey {
+			case "OnDemandPercentage":
+				if newValue, err := strconv.ParseFloat(text, 64); err == nil {
+					// Assuming asg has a method to update on-demand percentage safely
+					asg.OnDemandPercentage = newValue
+					// Optionally, recalculate or update related fields
+					// asg.CalculateHourlyPricing()
+					// Remember to handle errors or invalid input as needed
+					log.Printf("Updated OnDemandPercentage for %s to %.2f", *asg.AutoScalingGroupName, newValue)
+				} else {
+					log.Printf("Invalid OnDemandPercentage input: %s", text)
+				}
+			case "OnDemandNumber":
+				if newValue, err := strconv.ParseInt(text, 10, 64); err == nil {
+					// Assuming asg has a method to update on-demand number safely
+					asg.OnDemandNumber = newValue
+					// Optionally, recalculate or update related fields
+					// asg.CalculateHourlyPricing()
+					// Remember to handle errors or invalid input as needed
+					log.Printf("Updated OnDemandNumber for %s to %d", *asg.AutoScalingGroupName, newValue)
+				} else {
+					log.Printf("Invalid OnDemandNumber input: %s", text)
+				}
+			}
 
-			label.Hide()
-			check.Hide()
-			entry.Show()
-
+			// After updating the ASG, you might want to trigger a refresh of your UI
+			// or push changes to a server or configuration system as needed.
+			// This is highly dependent on your application's architecture.
 		}
 	}
-
 }
 
 func ebsOptimizerRollout(a fyne.App, w fyne.Window, c *core.Launcher) *container.TabItem {
@@ -305,7 +262,7 @@ func ebsOptimizerRollout(a fyne.App, w fyne.Window, c *core.Launcher) *container
 
 	// regionsStaticAuth := widget.NewSelect(awsRegions(), func(s string) {
 	// 	a.Preferences().SetString(preferenceRegion, s)
-	// 	fmt.Println("selected region", s)
+	// 	log.Println("selected region", s)
 	// 	c.StaticAuth(accessKey.Text, secret.Text, sessionToken.Text, s)
 	// })
 
@@ -330,10 +287,10 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 
 	regions := widget.NewSelect(c.AWSRegions(), func(s string) {
 		a.Preferences().SetString(preferenceAutoSpottingRolloutRegion, s)
-		fmt.Println("selected AWS region", s)
+		log.Println("selected AWS region", s)
 
 		if p := a.Preferences().String(preferenceProfile); p != "" {
-			fmt.Println("selected profile", p)
+			log.Println("selected profile", p)
 			c.ConnectWithProfileAuth(p)
 			c.SetRegion(p)
 		}
@@ -341,6 +298,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 		if !c.Connected {
 			err := errors.New("missing credentials")
 			dialog.ShowError(err, w)
+			return
 		}
 
 		if c.Regions == nil {
@@ -359,7 +317,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 
 	priceMode := widget.NewSelect([]string{"hourly", "monthly"}, func(s string) {
 		a.Preferences().SetString(preferenceAutoSpottingPricingInterval, s)
-		fmt.Println("selected pricing interval", s)
+		log.Println("selected pricing interval", s)
 
 		c.SetPricingInterval(s)
 	})
@@ -513,7 +471,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 
 			)),
 		nil, nil,
-		container.NewMax(container.NewAppTabs(
+		container.NewStack(container.NewAppTabs(
 			autoSpottingRollout(a, w, c),
 			//ebsOptimizerRollout(a, w, c),
 		)),
@@ -524,17 +482,17 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 // selectEntry.PlaceHolder = "Type or select"
 // disabledCheck := widget.NewCheck("Disabled check", func(bool) {})
 // disabledCheck.Disable()
-// checkGroup := widget.NewCheckGroup([]string{"CheckGroup Item 1", "CheckGroup Item 2"}, func(s []string) { fmt.Println("selected", s) })
+// checkGroup := widget.NewCheckGroup([]string{"CheckGroup Item 1", "CheckGroup Item 2"}, func(s []string) { log.Println("selected", s) })
 // checkGroup.Horizontal = true
-// radio := widget.NewRadioGroup([]string{"Radio Item 1", "Radio Item 2"}, func(s string) { fmt.Println("selected", s) })
+// radio := widget.NewRadioGroup([]string{"Radio Item 1", "Radio Item 2"}, func(s string) { log.Println("selected", s) })
 // radio.Horizontal = true
 // disabledRadio := widget.NewRadioGroup([]string{"Disabled radio"}, func(string) {})
 // disabledRadio.Disable()
 
 // return container.NewVBox(
-// 	widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) { fmt.Println("selected", s) }),
+// 	widget.NewSelect([]string{"Option 1", "Option 2", "Option 3"}, func(s string) { log.Println("selected", s) }),
 // 	selectEntry,
-// 	widget.NewCheck("Check", func(on bool) { fmt.Println("checked", on) }),
+// 	widget.NewCheck("Check", func(on bool) { log.Println("checked", on) }),
 // 	disabledCheck,
 // 	checkGroup,
 // 	radio,

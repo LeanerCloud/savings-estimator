@@ -8,10 +8,10 @@ import (
 	"strconv"
 
 	"fyne.io/fyne/v2/widget"
+	ec2instancesinfo "github.com/LeanerCloud/ec2-instances-info"
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling"
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	ec2instancesinfo "github.com/cristim/ec2-instances-info"
 )
 
 type AutoSpotting struct {
@@ -55,7 +55,7 @@ func (a *AutoSpotting) LoadASGData() error {
 	for paginator.HasMorePages() {
 		output, err := paginator.NextPage(context.TODO())
 		if err != nil {
-			fmt.Println("Error", err)
+			log.Println("Error", err)
 			return err
 		}
 		for _, asg := range output.AutoScalingGroups {
@@ -92,12 +92,12 @@ func (a *AutoSpotting) LoadASGData() error {
 				}
 			}
 
-			fmt.Printf("%#v", asgData)
+			log.Printf("%#v", asgData)
 
 			asgData.populate()
 
 			a.ASGs = append(a.ASGs, &asgData)
-			fmt.Printf("AutoSpotting found ASG: %#v\n", *asg.AutoScalingGroupName)
+			log.Printf("AutoSpotting found ASG: %#v\n", *asg.AutoScalingGroupName)
 		}
 
 	}
@@ -122,7 +122,7 @@ func (asg *ASG) readASGConfiguration() {
 				LaunchConfigurationNames: []string{*asg.LaunchConfigurationName},
 			})
 		if err != nil {
-			fmt.Printf("Couldn't determint launch configuration for ASG: %#v\n", *asg.AutoScalingGroupName)
+			log.Printf("Couldn't determint launch configuration for ASG: %#v\n", *asg.AutoScalingGroupName)
 			return
 		}
 		asg.InstanceTypes = []string{*resp.LaunchConfigurations[0].InstanceType}
@@ -136,7 +136,7 @@ func (asg *ASG) readASGConfiguration() {
 				Versions:           []string{*asg.LaunchTemplate.Version},
 			})
 		if err != nil {
-			fmt.Printf("Couldn't determine launch template for ASG: %#v\n", *asg.AutoScalingGroupName)
+			log.Printf("Couldn't determine launch template for ASG: %#v\n", *asg.AutoScalingGroupName)
 			return
 		}
 		for _, lt := range resp.LaunchTemplateVersions {
@@ -145,7 +145,44 @@ func (asg *ASG) readASGConfiguration() {
 		}
 
 	}
-	fmt.Printf("ASG Instance types: %v \n", asg.InstanceTypes)
+
+	if asg.MixedInstancesPolicy != nil && asg.MixedInstancesPolicy.LaunchTemplate != nil {
+		// Describe the launch template versions to get the AMI and potentially the instance type
+		overrideResp, err := asg.services.ec2.DescribeLaunchTemplateVersions(context.TODO(),
+			&ec2.DescribeLaunchTemplateVersionsInput{
+				LaunchTemplateId: asg.MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateId,
+				Versions:         []string{*asg.MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.Version},
+			})
+		if err != nil {
+			log.Printf("Couldn't determine launch template for mixed instances policy: %#v\n", *asg.AutoScalingGroupName)
+			return
+		}
+		// Assuming there's at least one version returned and it's safe to access the first element
+		if len(overrideResp.LaunchTemplateVersions) > 0 {
+			asg.ami = *overrideResp.LaunchTemplateVersions[0].LaunchTemplateData.ImageId
+			// Reset or initialize the slice to ensure it's ready for override instance types or the default instance type
+			asg.InstanceTypes = []string{}
+
+			// Check if there are overrides
+			if len(asg.MixedInstancesPolicy.LaunchTemplate.Overrides) > 0 {
+				// Handle the instance type overrides
+				for _, override := range asg.MixedInstancesPolicy.LaunchTemplate.Overrides {
+					if override.InstanceType != nil {
+						asg.InstanceTypes = append(asg.InstanceTypes, *override.InstanceType)
+					}
+				}
+			} else {
+				// Fallback to the instance type from the launch template version if no overrides are present
+				instanceType := overrideResp.LaunchTemplateVersions[0].LaunchTemplateData.InstanceType
+				if instanceType != "" {
+					asg.InstanceTypes = append(asg.InstanceTypes, string(instanceType))
+				}
+			}
+		}
+	}
+
+	log.Printf("ASG Instance types: %v \n", asg.InstanceTypes)
+	log.Printf("ASG AMI: %v \n", asg.ami)
 }
 
 func (asg *ASG) CalculateHourlyPricing() error {
@@ -188,7 +225,7 @@ func (asg *ASG) CalculateHourlyPricing() error {
 	asg.ProjectedCosts = projectedCosts
 	asg.ProjectedSavings = projectedSavings
 
-	fmt.Printf("ASG current OnDemand costs %v, projected costs: %v, savings: %v \n", odCosts, projectedCosts, projectedSavings)
+	log.Printf("ASG current OnDemand costs %v, projected costs: %v, savings: %v \n", odCosts, projectedCosts, projectedSavings)
 
 	return nil
 }
