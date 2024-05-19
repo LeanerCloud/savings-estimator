@@ -60,6 +60,11 @@ jobs:
       - name: Install Fyne CLI
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libxcursor-dev pkg-config
+
       - name: Build for Linux
         run: fyne package -os linux -icon logo.png
 
