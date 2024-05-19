@@ -103,9 +103,12 @@ jobs:
       - name: Build for macOS
         run: fyne package -os darwin -id com.leanercloud.savings-estimator -icon logo.png
 
+      - name: Compress macOS .app Bundle
+        run: zip -r savings-estimator-macos.zip savings-estimator.app
+
       - name: Attach macOS Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
           tag: 1.0-${{ needs.setup.outputs.date }}-git-${{ needs.setup.outputs.sha_short }}
-          file: savings-estimator.app
-          asset_name: savings-estimator-macos.app
+          file: savings-estimator-macos.zip
+          asset_name: savings-estimator-macos.zip
