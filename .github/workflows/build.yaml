@@ -37,7 +37,7 @@ jobs:
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
 
       - name: Build for Windows
-        run: fyne package -os windows -id com.leanercloud.savings-estimator -icon Icon.png
+        run: fyne package -os windows -id com.leanercloud.savings-estimator -icon logo.png
 
       - name: Attach Windows Artifact to Release
         uses: svenstaro/upload-release-action@v2
@@ -61,7 +61,7 @@ jobs:
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
 
       - name: Build for Linux
-        run: fyne package -os linux -icon Icon.png
+        run: fyne package -os linux -icon logo.png
 
       - name: Attach Linux Artifact to Release
         uses: svenstaro/upload-release-action@v2
@@ -85,7 +85,7 @@ jobs:
         run: go install fyne.io/fyne/v2/cmd/fyne@latest
 
       - name: Build for macOS
-        run: fyne package -os darwin -app-id com.leanercloud.savings-estimator -icon Icon.png
+        run: fyne package -os darwin -id com.leanercloud.savings-estimator -icon logo.png
 
       - name: Attach macOS Artifact to Release
         uses: svenstaro/upload-release-action@v2
