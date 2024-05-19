@@ -445,7 +445,7 @@ func rollout(w fyne.Window, c *core.Launcher) fyne.CanvasObject {
 				},
 				&widget.Form{
 					Items: []*widget.FormItem{
-						{Text: "AutoSpotting charges (~5% of savings)", Widget: widget.NewLabelWithData(
+						{Text: "AutoSpotting charges (~10% of savings)", Widget: widget.NewLabelWithData(
 							c.AutoSpottingProjectedAutoSpottingCharges), HintText: ""},
 						{Text: "Total Monthly net savings", Widget: widget.NewLabelWithData(
 							c.AutoSpottingProjectedNetSavings), HintText: ""},

@@ -188,7 +188,7 @@ func (c *Launcher) UpdateAutoSpottingTotals(region string) {
 
 	}
 
-	projectedAutoSpottingCharges := math.Floor(projectedSpotSavings/14.6) * 0.73
+	projectedAutoSpottingCharges := math.Floor(projectedSpotSavings/7.3) * 0.73
 	projectedSpotSavingsPercent = projectedSpotSavings / currentTotalMonthlyCosts
 
 	projectedNetSavings = projectedSpotSavings - projectedAutoSpottingCharges
