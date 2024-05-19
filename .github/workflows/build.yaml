@@ -111,4 +111,4 @@ jobs:
         with:
           tag: 1.0-${{ needs.setup.outputs.date }}-git-${{ needs.setup.outputs.sha_short }}
           file: savings-estimator-macos.zip
-          asset_name: savings-estimator-macos.zip
+          asset_name: savings-estimator-macos-arm64.zip
