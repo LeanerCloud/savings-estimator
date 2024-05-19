@@ -6,9 +6,25 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: macos-latest
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.set-date.outputs.date }}
+      sha_short: ${{ steps.set-sha.outputs.sha_short }}
+    steps:
+      - uses: actions/checkout@v3
 
+      - name: Current date
+        id: set-date
+        run: echo "::set-output name=date::$(date +%F)"
+
+      - name: Git commit short SHA
+        id: set-sha
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+  build-windows:
+    runs-on: windows-latest
+    needs: setup
     steps:
       - uses: actions/checkout@v3
 
@@ -17,57 +33,63 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install fyne-cross
-        run: go install github.com/fyne-io/fyne-cross@latest
+      - name: Install Fyne CLI
+        run: go install fyne.io/fyne/v2/cmd/fyne@latest
 
       - name: Build for Windows
-        run: fyne-cross windows -arch=amd64 -app-id com.leanercloud.savings-estimator
-
-      - name: Build for Linux
-        run: fyne-cross linux -arch=amd64,arm64
-
-      - name: Build for macOS
-        run: fyne-cross darwin -arch=amd64,arm64 -app-id com.leanercloud.savings-estimator
-
-      - name: Current date
-        id: date
-        run: echo "date=$(date +%F)" >> $GITHUB_ENV
-
-      - name: Git commit short SHA
-        id: sha_short
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        run: fyne package -os windows -id com.leanercloud.savings-estimator -icon Icon.png
 
       - name: Attach Windows Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
-          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/windows-amd64/savings-estimator.exe
+          tag: 1.0-${{ needs.setup.outputs.date }}-git-${{ needs.setup.outputs.sha_short }}
+          file: savings-estimator.exe
           asset_name: savings-estimator-windows-amd64.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.22"
+
+      - name: Install Fyne CLI
+        run: go install fyne.io/fyne/v2/cmd/fyne@latest
+
+      - name: Build for Linux
+        run: fyne package -os linux -icon Icon.png
 
       - name: Attach Linux Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
-          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/linux-amd64/savings-estimator
+          tag: 1.0-${{ needs.setup.outputs.date }}-git-${{ needs.setup.outputs.sha_short }}
+          file: savings-estimator
           asset_name: savings-estimator-linux-amd64
 
-      - name: Attach Linux ARM64 Artifact to Release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/linux-arm64/savings-estimator
-          asset_name: savings-estimator-linux-arm64
+  build-macos:
+    runs-on: macos-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
 
-      - name: Attach macOS AMD64 Artifact to Release
-        uses: svenstaro/upload-release-action@v2
+      - name: Setup Go
+        uses: actions/setup-go@v3
         with:
-          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/darwin-amd64/savings-estimator.app
-          asset_name: savings-estimator-macos-amd64.app
+          go-version: "1.22"
 
-      - name: Attach macOS ARM64 Artifact to Release
+      - name: Install Fyne CLI
+        run: go install fyne.io/fyne/v2/cmd/fyne@latest
+
+      - name: Build for macOS
+        run: fyne package -os darwin -app-id com.leanercloud.savings-estimator -icon Icon.png
+
+      - name: Attach macOS Artifact to Release
         uses: svenstaro/upload-release-action@v2
         with:
-          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
-          file: fyne-cross/bin/darwin-arm64/savings-estimator.app
-          asset_name: savings-estimator-macos-arm64.app
+          tag: 1.0-${{ needs.setup.outputs.date }}-git-${{ needs.setup.outputs.sha_short }}
+          file: savings-estimator.app
+          asset_name: savings-estimator-macos.app
