@@ -63,7 +63,18 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libx11-dev libxcursor-dev libxrandr-dev libxi-dev libxxf86vm-dev libfreetype6-dev pkg-config
+          sudo apt-get install -y \
+            libgl1-mesa-dev \
+            libx11-dev \
+            libxcursor-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libxxf86vm-dev \
+            libfreetype6-dev \
+            libxinerama-dev \
+            libglfw3 \
+            libglfw3-dev \
+            pkg-config
 
       - name: Build for Linux
         run: fyne package -os linux -icon logo.png
