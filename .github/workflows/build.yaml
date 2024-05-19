@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -15,17 +15,19 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.20'
+          go-version: "1.22"
 
       - name: Install fyne-cross
         run: go install github.com/fyne-io/fyne-cross@latest
 
       - name: Build for Windows
-        run: fyne-cross windows -arch=amd64
+        run: fyne-cross windows -arch=amd64 -app-id com.leanercloud.savings-estimator
 
       - name: Build for Linux
         run: fyne-cross linux -arch=amd64,arm64
 
+      - name: Build for macOS
+        run: fyne-cross darwin -arch=amd64,arm64 -app-id com.leanercloud.savings-estimator
 
       - name: Current date
         id: date
@@ -55,3 +57,17 @@ jobs:
           tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
           file: fyne-cross/bin/linux-arm64/savings-estimator
           asset_name: savings-estimator-linux-arm64
+
+      - name: Attach macOS AMD64 Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
+          file: fyne-cross/bin/darwin-amd64/savings-estimator.app
+          asset_name: savings-estimator-macos-amd64.app
+
+      - name: Attach macOS ARM64 Artifact to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          tag: 1.0-${{ env.date }}-git-${{ env.sha_short }}
+          file: fyne-cross/bin/darwin-arm64/savings-estimator.app
+          asset_name: savings-estimator-macos-arm64.app
