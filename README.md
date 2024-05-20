@@ -23,11 +23,17 @@ And here's a screenshot from that demo:
 
 ## Precompiled Binaries
 
-Binaries for Windows and Linux are available at
+Binaries for Windows, Mac and Linux are available at
 [Releases](https://github.com/LeanerCloud/savings-estimator/releases).
 
-On Linux you may need to make them executable after you download them, and it's
-recommended to put them in one of the directories listed in the `PATH` variable
+For macOS, the binaries get reported as damaged because they are not signed with a developer certificate.
+After extracting the app file from the archive you need to approve the app file by running the below command, then drag it to the Applications folder in Finder.
+
+```shell
+sudo xattr -r -d com.apple.quarantine savings-estimator.app       
+```
+
+On Linux you may want to extract the binary in one of the directories listed in the `PATH` variable.
 
 ## Install from source code
 
